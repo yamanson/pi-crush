@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi-Crush</title>
+    <style>
+        body { background-color: #1a1a2e; color: #fff; font-family: sans-serif; text-align: center; }
+        #board { display: grid; grid-template-columns: repeat(7, 50px); grid-template-rows: repeat(7, 50px); gap: 4px; justify-content: center; margin-top: 20px; }
+        .tile { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; user-select: none; }
+        /* Geçici renk kodları (Daha sonra fütüristik emojiler/ikonlar gelecek) */
+        .pi { background-color: #8a2be2; } /* Mor - Pi Logosu */
+        .ai { background-color: #ff4500; } /* Turuncu - AI Çipi */
+        .block { background-color: #1e90ff; } /* Mavi - Kripto Blok */
+        .pick { background-color: #32cd32; } /* Yeşil - Kazma */
+        .cloud { background-color: #ff69b4; } /* Pembe - Bulut */
+    </style>
+</head>
+<body>
+    <h1>Pi-Crush (Test Sürümü)</h1>
+    <p>Hedef: Benzer renkleri yan yana getirerek eşleştirin.</p>
+    <div id="board"></div>
+
+    <script>
+        const width = 7;
+        const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
+        const board = document.getElementById('board');
+        let tiles = [];
+
+        // Oyun tahtasını oluşturma
+        function createBoard() {
+            for (let i = 0; i < width * width; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile ' + tileTypes[Math.floor(Math.random() * tileTypes.length)];
+                tile.setAttribute('draggable', true);
+                tile.setAttribute('id', i);
+                board.appendChild(tile);
+                tiles.push(tile);
+            }
+        }
+        createBoard();
+        // Eşleştirme ve sürükleme mantığı bu alana eklenecek
+    </script>
+</body>
+</html>
