@@ -8,7 +8,10 @@
     <script src="https://minepi.com"></script>
     <style>
         body { background-color: #1a1a2e; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        #auth-status { font-size: 14px; color: #ffbe0b; margin-bottom: 10px; background: #222; padding: 5px; display: inline-block; border-radius: 5px; }
+        #auth-container { margin-bottom: 15px; background: #16213e; padding: 15px; border-radius: 10px; border: 1px solid #ffbe0b; }
+        #auth-status { font-size: 16px; color: #ffbe0b; font-weight: bold; margin-bottom: 10px; }
+        .btn-auth { background: #ffbe0b; color: #1a1a2e; border: none; padding: 10px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-auth:hover { background: #ffbe0bfa; transform: scale(1.05); }
         #stats-container { display: flex; justify-content: center; gap: 30px; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
         .stat-box { background: #16213e; padding: 10px 20px; border-radius: 8px; border: 2px solid #e94560; }
         #board { display: grid; grid-template-columns: repeat(7, 50px); grid-template-rows: repeat(7, 50px); gap: 4px; justify-content: center; margin: 10px auto; background-color: #16213e; padding: 10px; border-radius: 12px; width: max-content; }
@@ -16,13 +19,17 @@
         .tile:active { transform: scale(0.9); }
         .pi { background-color: #8a2be2; } .ai { background-color: #ff4500; } .block { background-color: #1e90ff; } .pick { background-color: #32cd32; } .cloud { background-color: #ff69b4; }
         #game-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f3460; padding: 30px; border-radius: 15px; border: 3px solid #ffbe0b; box-shadow: 0 0 20px rgba(0,0,0,0.7); z-index: 100; text-align: center; }
-        button { background: #e94560; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        button:hover { background: #ff4500; }
+        .btn-game { background: #e94560; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        .btn-game:hover { background: #ff4500; }
     </style>
 </head>
 <body>
     <h1>Pi-Crush Pro</h1>
-    <div id="auth-status">Pi Bağlantısı Bekleniyor...</div>
+    
+    <div id="auth-container">
+        <div id="auth-status">Lütfen aşağıdaki butona basarak Pi hesabınızla giriş yapın:</div>
+        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Pi Ağı ile Giriş Yap</button>
+    </div>
     
     <div id="stats-container">
         <div class="stat-box">Bölüm: <span id="level-val">1</span></div>
@@ -35,35 +42,51 @@
     <div id="game-modal">
         <h2 id="modal-title">TEBRİKLER!</h2>
         <p id="modal-text">Bölümü başarıyla geçtiniz.</p>
-        <button id="modal-btn" onclick="closeModal()">Sonraki Bölüm</button>
+        <button id="modal-btn" class="btn-game" onclick="closeModal()">Sonraki Bölüm</button>
     </div>
 
     <script>
-        // Pi SDK Başlatma Fonksiyonları
-        document.addEventListener("DOMContentLoaded", async () => {
-            const statusDiv = document.getElementById('auth-status');
+        // Pi SDK Başlatma adımları
+        async function initPi() {
             try {
                 if (window.Pi) {
-                    // SDK'yı 2.0 sürümüne göre başlatıyoruz
                     await window.Pi.init({ version: "2.0", sandbox: true });
-                    
-                    // Kullanıcıdan kimlik doğrulama istiyoruz
-                    const scopes = ['username'];
-                    const auth = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-                    
-                    statusDiv.textContent = `Hoş geldin Pilot: ${auth.user.username}`;
-                } else {
-                    statusDiv.textContent = "Pi Browser dışında çalışıyor (Test Modu)";
+                    console.log("Pi SDK initialized successfully.");
+                    // Otomatik doğrulamayı da arka planda hazır tutuyoruz
+                    startPiAuth();
                 }
             } catch (err) {
-                console.error(err);
-                statusDiv.textContent = "Giriş Yapılamadı (Normal Tarayıcı Modu)";
+                console.error("SDK Init Error:", err);
             }
-        });
-
-        function onIncompletePaymentFound(payment) {
-            // Tamamlanmamış ödemeleri yönetmek için boş fonksiyon (İleride Pi harcamaları için kullanılacak)
         }
+
+        // Giriş Butonuna Basınca Çalışacak Fonksiyon
+        async function startPiAuth() {
+            const statusDiv = document.getElementById('auth-status');
+            const loginBtn = document.getElementById('login-btn');
+            
+            if (!window.Pi) {
+                statusDiv.textContent = "Test Modu (Pi Browser Dışındasınız)";
+                if(loginBtn) loginBtn.style.display = 'none';
+                return;
+            }
+
+            try {
+                statusDiv.textContent = "Bağlantı kuruluyor...";
+                const scopes = ['username'];
+                const auth = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+                
+                statusDiv.textContent = `Giriş Başarılı! Hoş geldin: ${auth.user.username}`;
+                if(loginBtn) loginBtn.style.display = 'none';
+            } catch (err) {
+                console.error("Authentication failed:", err);
+                statusDiv.textContent = "Giriş başarısız oldu. Lütfen butona tekrar basmayı deneyin.";
+            }
+        }
+
+        function onIncompletePaymentFound(payment) {}
+
+        document.addEventListener("DOMContentLoaded", initPi);
 
         // --- OYUN MOTORU KODLARI ---
         const width = 7;
@@ -173,29 +196,3 @@
                     const type = tiles[i].className.split(' ');
                     if(type) {
                         tiles[i + width].className = `tile ${type}`; tiles[i + width].textContent = emojis[type];
-                        tiles[i].className = 'tile blank'; tiles[i].textContent = '';
-                    }
-                }
-            }
-            for (let i = 0; i < width; i++) {
-                if (tiles[i].className.includes('blank')) {
-                    const type = tileTypes[Math.floor(Math.random() * tileTypes.length)];
-                    tiles[i].className = `tile ${type}`; tiles[i].textContent = emojis[type];
-                }
-            }
-        }
-
-        function checkMatchesAndDrop() {
-            let matchFound = true, loops = 0;
-            while (matchFound && loops < 10) {
-                matchFound = checkRowForThree() || checkColumnForThree();
-                if (matchFound) { for (let j = 0; j < width; j++) moveIntoSquareBelow(); }
-                loops++;
-            }
-        }
-
-        function checkGameStatus() {
-            if (score >= targetScore) {
-                showModal("BÖLÜM GEÇİLDİ!", "Tebrikler, hedef skora ulaştınız!", "Sonraki Bölüm");
-                gameActive = false;
-            } else if (moves <= 0) {
