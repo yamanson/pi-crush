@@ -32,7 +32,6 @@
             max-width: 380px;
         }
         #auth-status { font-size: 13px; color: #ffbe0b; font-weight: bold; }
-        .btn-auth { background: #ffbe0b; color: #1a1a2e; border: none; padding: 6px 15px; font-size: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; }
 
         #stats-container { display: flex; justify-content: center; gap: 10px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .stat-box { 
@@ -45,40 +44,47 @@
         .stat-label { font-size: 10px; text-transform: uppercase; color: #aaa; margin-bottom: 2px; }
         .stat-val { font-size: 18px; color: #fff; }
 
+        /* Oyun Tahtası CSS Alanı - Görünürlük Sabitlendi */
         #board { 
             display: grid; 
             grid-template-columns: repeat(7, 50px); 
             grid-template-rows: repeat(7, 50px); 
             gap: 5px; 
             justify-content: center; 
-            margin: 10px auto; 
+            margin: 15px auto; 
             background-color: rgba(15, 52, 96, 0.4); 
             padding: 10px; 
             border-radius: 14px; 
             width: max-content; 
             border: 2px solid #30475e;
-            position: relative;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            min-height: 380px; /* Boş kalmasını engelleyen emniyet bandı */
         }
         
+        /* Kristallerin Görsel Boyutları Garantilendi */
         .tile { 
-            width: 50px; 
-            height: 50px; 
+            width: 50px !important; 
+            height: 50px !important; 
             border-radius: 8px; 
-            display: flex; 
+            display: flex !important; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
             box-sizing: border-box;
             font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         
-        /* Kristaller */
-        .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7); }
-        .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05); }
-        .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6); }
-        .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9); }
-        .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f); }
-        .tile.blank { background: transparent !important; }
+        /* Kristal Renk Kodları */
+        .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7) !important; box-shadow: inset 0 0 8px #f72585; }
+        .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05) !important; box-shadow: inset 0 0 8px #ffbe0b; }
+        .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6) !important; box-shadow: inset 0 0 8px #90e0ef; }
+        .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9) !important; box-shadow: inset 0 0 8px #fff; }
+        .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f) !important; box-shadow: inset 0 0 8px #fff; border-radius: 50%; }
+        
+        .tile.blank { background: transparent !important; box-shadow: none !important; }
 
         #joker-container { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .joker-box { 
@@ -206,14 +212,3 @@
             if (!tile) return 'blank';
             const classes = tile.className.split(' ');
             if (classes.includes('blank')) return 'blank';
-            return classes.find(c => tileTypes.includes(c)) || 'blank';
-        }
-
-        function checkRowForThree() {
-            let foundMatch = false;
-            for (let i = 0; i < 49; i++) {
-                if (i % width > 4) continue;
-                let match = [i, i + 1, i + 2];
-                let type = getTileType(tiles[i]);
-                if (type !== 'blank' && match.every(idx => getTileType(tiles[idx]) === type)) {
-                    score += 10; foundMatch = true;
