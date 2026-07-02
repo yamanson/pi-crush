@@ -79,23 +79,24 @@
         }
         .tile:active { transform: scale(0.9); }
         
-        /* Kristal Tasarımlarının Sabit Sınıfları */
-        .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7); box-shadow: inset 0 0 8px #f72585, 0 0 8px rgba(181,23,158,0.5); }
-        .tile.pi::after { content: "π"; font-size: 24px; font-weight: bold; color: #fff; }
+        /* Kristal Tasarımları İçin Güçlendirilmiş Sınıflar */
+        .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7) !important; box-shadow: inset 0 0 8px #f72585, 0 0 8px rgba(181,23,158,0.5); }
+        .tile.pi::after { content: "π" !important; font-size: 24px !important; font-weight: bold !important; color: #fff !important; }
         
-        .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05); box-shadow: inset 0 0 8px #ffbe0b, 0 0 8px rgba(255,78,0,0.5); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
-        .tile.ai::after { content: "AI"; font-size: 12px; font-weight: bold; color: #fff; }
+        .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05) !important; box-shadow: inset 0 0 8px #ffbe0b, 0 0 8px rgba(255,78,0,0.5); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+        .tile.ai::after { content: "AI" !important; font-size: 12px !important; font-weight: bold !important; color: #fff !important; }
 
-        .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6); box-shadow: inset 0 0 8px #90e0ef, 0 0 8px rgba(0,180,216,0.5); border-radius: 4px; }
-        .tile.block::after { content: "♦"; font-size: 22px; color: #fff; }
+        .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6) !important; box-shadow: inset 0 0 8px #90e0ef, 0 0 8px rgba(0,180,216,0.5); border-radius: 4px; }
+        .tile.block::after { content: "♦" !important; font-size: 22px !important; color: #fff !important; }
 
-        .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9); box-shadow: inset 0 0 8px #fff, 0 0 8px rgba(0,245,212,0.5); transform: rotate(45deg) scale(0.8); }
-        
-        .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f); box-shadow: inset 0 0 8px #fff, 0 0 8px rgba(255,0,127,0.5); border-radius: 50%; transform: scale(0.85); }
-        .tile.cloud::after { content: "★"; font-size: 18px; color: #fff; }
+        .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9) !important; box-shadow: inset 0 0 8px #fff, 0 0 8px rgba(0,245,212,0.5); transform: rotate(45deg) scale(0.8); }
+        .tile.pick::after { content: "" !important; }
 
-        .tile.blank { background: transparent; box-shadow: none; }
-        .tile.blank::after { content: "" !important; clip-path: none !important; transform: none !important; }
+        .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f) !important; box-shadow: inset 0 0 8px #fff, 0 0 10px rgba(255,0,127,0.6) !important; border-radius: 50% !important; transform: scale(0.85); }
+        .tile.cloud::after { content: "★" !important; font-size: 18px !important; color: #fff !important; }
+
+        .tile.blank { background: transparent !important; box-shadow: none !important; clip-path: none !important; transform: none !important; border-radius: 0 !important; }
+        .tile.blank::after { content: "" !important; }
 
         #joker-container { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .joker-box { 
@@ -106,7 +107,7 @@
         .joker-count { background: #32cd32; color: white; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; margin-left: 4px; }
         .joker-ad-icon { font-size: 9px; color: #ffbe0b; display: block; margin-top: 2px; }
 
-        #combo-text { position: absolute; font-size: 24px; font-weight: bold; color: #ffbe0b; text-shadow: 0 0 10px #ff4e00; display: none; pointer-events: none; z-index: 50; animation: popUp 0.8s ease-out; top: 40%; left: 30%; }
+        #combo-text { position: absolute; font-size: 24px; font-weight: bold; color: #ffbe0b; text-shadow: 0 0 10px #ff4e00; display: none; pointer-events: none; z-index: 50; animation: popUp 0.8s ease-out; top: 40%; left: 35%; }
         @keyframes popUp { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.3) translateY(-30px); opacity: 0; } }
 
         #game-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f3460; padding: 25px; border-radius: 15px; border: 3px solid #ffbe0b; box-shadow: 0 0 30px rgba(0,0,0,0.9); z-index: 100; text-align: center; }
@@ -191,10 +192,3 @@
             document.getElementById('score-val').textContent = score;
             document.getElementById('moves-val').textContent = moves;
             document.getElementById('level-val').textContent = currentLevel;
-            document.getElementById('target-val').textContent = targetScore;
-            document.getElementById('hammer-count').textContent = inventory.hammer;
-            document.getElementById('bomb-count').textContent = inventory.bomb;
-            document.getElementById('shuffle-count').textContent = inventory.shuffle;
-        }
-
-        function createBoard() {
