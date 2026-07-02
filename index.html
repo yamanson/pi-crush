@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pi-Crush Pro SDK</title>
-    <!-- Pi Network SDK Kütüphanesi -->
+    <!-- Pi Network SDK Library -->
     <script src="https://minepi.com"></script>
     <style>
         body { background-color: #1a1a2e; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
@@ -27,32 +27,31 @@
     <h1>Pi-Crush Pro</h1>
     
     <div id="auth-container">
-        <div id="auth-status">Lütfen aşağıdaki butona basarak Pi hesabınızla giriş yapın:</div>
-        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Pi Ağı ile Giriş Yap</button>
+        <div id="auth-status">Please click the button below to sign in with your Pi account:</div>
+        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Sign In with Pi Network</button>
     </div>
     
     <div id="stats-container">
-        <div class="stat-box">Bölüm: <span id="level-val">1</span></div>
-        <div class="stat-box">Hamle: <span id="moves-val">20</span></div>
-        <div class="stat-box">Skor: <span id="score-val">0</span> / <span id="target-val">150</span></div>
+        <div class="stat-box">Level: <span id="level-val">1</span></div>
+        <div class="stat-box">Moves: <span id="moves-val">20</span></div>
+        <div class="stat-box">Score: <span id="score-val">0</span> / <span id="target-val">150</span></div>
     </div>
     
     <div id="board"></div>
 
     <div id="game-modal">
-        <h2 id="modal-title">TEBRİKLER!</h2>
-        <p id="modal-text">Bölümü başarıyla geçtiniz.</p>
-        <button id="modal-btn" class="btn-game" onclick="closeModal()">Sonraki Bölüm</button>
+        <h2 id="modal-title">CONGRATULATIONS!</h2>
+        <p id="modal-text">You have successfully cleared the level.</p>
+        <button id="modal-btn" class="btn-game" onclick="closeModal()">Next Level</button>
     </div>
 
     <script>
-        // Pi SDK Başlatma adımları
+        // Pi SDK Initialization
         async function initPi() {
             try {
                 if (window.Pi) {
                     await window.Pi.init({ version: "2.0", sandbox: true });
                     console.log("Pi SDK initialized successfully.");
-                    // Otomatik doğrulamayı da arka planda hazır tutuyoruz
                     startPiAuth();
                 }
             } catch (err) {
@@ -60,27 +59,27 @@
             }
         }
 
-        // Giriş Butonuna Basınca Çalışacak Fonksiyon
+        // Authentication Function
         async function startPiAuth() {
             const statusDiv = document.getElementById('auth-status');
             const loginBtn = document.getElementById('login-btn');
             
             if (!window.Pi) {
-                statusDiv.textContent = "Test Modu (Pi Browser Dışındasınız)";
+                statusDiv.textContent = "Test Mode (Outside Pi Browser)";
                 if(loginBtn) loginBtn.style.display = 'none';
                 return;
             }
 
             try {
-                statusDiv.textContent = "Bağlantı kuruluyor...";
+                statusDiv.textContent = "Connecting to Pi Network...";
                 const scopes = ['username'];
                 const auth = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
                 
-                statusDiv.textContent = `Giriş Başarılı! Hoş geldin: ${auth.user.username}`;
+                statusDiv.textContent = `Welcome, ${auth.user.username}!`;
                 if(loginBtn) loginBtn.style.display = 'none';
             } catch (err) {
                 console.error("Authentication failed:", err);
-                statusDiv.textContent = "Giriş başarısız oldu. Lütfen butona tekrar basmayı deneyin.";
+                statusDiv.textContent = "Sign-in failed. Please try clicking the button again.";
             }
         }
 
@@ -88,7 +87,7 @@
 
         document.addEventListener("DOMContentLoaded", initPi);
 
-        // --- OYUN MOTORU KODLARI ---
+        // --- GAME ENGINE CODES ---
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
         const emojis = { 'pi': 'π', 'ai': '🤖', 'block': '📦', 'pick': '⛏️', 'cloud': '☁️' };
@@ -196,3 +195,7 @@
                     const type = tiles[i].className.split(' ');
                     if(type) {
                         tiles[i + width].className = `tile ${type}`; tiles[i + width].textContent = emojis[type];
+                        tiles[i].className = 'tile blank'; tiles[i].textContent = '';
+                    }
+                }
+            }
