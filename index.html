@@ -74,12 +74,12 @@
             color: #fff;
         }
         
+        /* Kristal Renk Blokları */
         .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7) !important; box-shadow: inset 0 0 8px #f72585; }
         .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05) !important; box-shadow: inset 0 0 8px #ffbe0b; }
         .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6) !important; box-shadow: inset 0 0 8px #90e0ef; }
         .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9) !important; box-shadow: inset 0 0 8px #fff; }
         .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f) !important; box-shadow: inset 0 0 8px #fff; border-radius: 50%; }
-        
         .tile.blank { background: transparent !important; box-shadow: none !important; }
 
         #joker-container { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
@@ -132,6 +132,22 @@
     </div>
 
     <script>
+        // Pi SDK'yı normal tarayıcıları bozmayacak şekilde güvenli yüklüyoruz
+        const piScript = document.createElement('script');
+        piScript.src = "https://minepi.com";
+        piScript.onload = function() {
+            if(window.Pi) {
+                window.Pi.init({ version: "2.0", sandbox: true }).then(() => {
+                    window.Pi.authenticate(['username'], function(){}).then(auth => {
+                        document.getElementById('auth-status').textContent = "Pilot Connected: " + auth.user.username;
+                    }).catch(()=>{});
+                }).catch(()=>{});
+            }
+        };
+        piScript.onerror = function() { console.log("Pi SDK blocked by browser, bypassing safely."); };
+        document.head.appendChild(piScript);
+
+        // --- GAME ENGINE ---
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
         const emojis = { 'pi': 'π', 'ai': '🤖', 'block': '📦', 'pick': '⛏️', 'cloud': '☁️' };
@@ -191,27 +207,3 @@
                     swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
                 } else {
                     moves--; updateUI(); checkMatchesAndDrop(); checkGameStatus();
-                }
-            }
-        }
-
-        function swapTiles(id1, id2) {
-            const class1 = tiles[id1].className;
-            const text1 = tiles[id1].textContent;
-            tiles[id1].className = tiles[id2].className;
-            tiles[id1].textContent = tiles[id2].textContent;
-            tiles[id2].className = class1;
-            tiles[id2].textContent = text1;
-        }
-
-        function getTileType(tile) {
-            if (!tile) return 'blank';
-            const classes = tile.className.split(' ');
-            if (classes.includes('blank')) return 'blank';
-            return classes.find(c => tileTypes.includes(c)) || 'blank';
-        }
-
-        function checkRowForThree() {
-            let foundMatch = false;
-            for (let i = 0; i < 49; i++) {
-                if (i % width > 4) continue;
