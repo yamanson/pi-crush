@@ -69,19 +69,18 @@
             justify-content: center; 
             cursor: pointer; 
             box-sizing: border-box;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             color: #fff;
         }
         
-        /* Kristaller Saf Renk ve CSS Geometrisiyle Çizildi (Dış Bağlantı Yok) */
-        .tile.pi { background: #8a2be2 !important; box-shadow: inset 0 0 10px #fff; border-radius: 50%; }
-        .tile.ai { background: #ff4500 !important; box-shadow: inset 0 0 10px #fff; transform: rotate(45deg); scale: 0.8; }
-        .tile.block { background: #1e90ff !important; box-shadow: inset 0 0 10px #fff; border-radius: 4px; }
-        .tile.pick { background: #32cd32 !important; box-shadow: inset 0 0 10px #fff; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-        .tile.cloud { background: #ff69b4 !important; box-shadow: inset 0 0 10px #fff; border-radius: 12px 0 12px 0; }
+        .tile.pi { background: linear-gradient(135deg, #b5179e, #7209b7) !important; box-shadow: inset 0 0 8px #f72585; }
+        .tile.ai { background: linear-gradient(135deg, #ff4e00, #ec9f05) !important; box-shadow: inset 0 0 8px #ffbe0b; }
+        .tile.block { background: linear-gradient(135deg, #00b4d8, #0077b6) !important; box-shadow: inset 0 0 8px #90e0ef; }
+        .tile.pick { background: linear-gradient(135deg, #00f5d4, #00bbf9) !important; box-shadow: inset 0 0 8px #fff; }
+        .tile.cloud { background: linear-gradient(135deg, #ff007f, #ff007f) !important; box-shadow: inset 0 0 8px #fff; border-radius: 50%; }
         
-        .tile.blank { background: transparent !important; box-shadow: none !important; clip-path: none !important; transform: none !important; }
+        .tile.blank { background: transparent !important; box-shadow: none !important; }
 
         #joker-container { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .joker-box { 
@@ -135,6 +134,7 @@
     <script>
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
+        const emojis = { 'pi': 'π', 'ai': '🤖', 'block': '📦', 'pick': '⛏️', 'cloud': '☁️' };
         const board = document.getElementById('board');
         
         let score = 0, moves = 20, currentLevel = 1, targetScore = 150;
@@ -159,14 +159,7 @@
                 const tile = document.createElement('div');
                 const randomType = tileTypes[Math.floor(Math.random() * tileTypes.length)];
                 tile.className = 'tile ' + randomType;
-                
-                // Taşların üzerine ayırt edici harfler koyuyoruz
-                if(randomType === 'pi') tile.textContent = 'P';
-                if(randomType === 'ai') tile.textContent = 'A';
-                if(randomType === 'block') tile.textContent = 'B';
-                if(randomType === 'pick') tile.textContent = 'M';
-                if(randomType === 'cloud') tile.textContent = 'C';
-
+                tile.textContent = emojis[randomType];
                 tile.setAttribute('draggable', true);
                 tile.setAttribute('id', i);
                 
@@ -213,3 +206,12 @@
 
         function getTileType(tile) {
             if (!tile) return 'blank';
+            const classes = tile.className.split(' ');
+            if (classes.includes('blank')) return 'blank';
+            return classes.find(c => tileTypes.includes(c)) || 'blank';
+        }
+
+        function checkRowForThree() {
+            let foundMatch = false;
+            for (let i = 0; i < 49; i++) {
+                if (i % width > 4) continue;
