@@ -3,38 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi-Crush Pro SDK</title>
+    <title>Pi-Crush Pro Premium</title>
     <!-- Pi Network SDK Library -->
     <script src="https://minepi.com"></script>
     <style>
-        body { background-color: #1a1a2e; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        #auth-container { margin-bottom: 15px; background: #16213e; padding: 15px; border-radius: 10px; border: 1px solid #ffbe0b; }
-        #auth-status { font-size: 16px; color: #ffbe0b; font-weight: bold; margin-bottom: 10px; }
-        .btn-auth { background: #ffbe0b; color: #1a1a2e; border: none; padding: 10px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-auth:hover { background: #ffbe0bfa; transform: scale(1.05); }
-        #stats-container { display: flex; justify-content: center; gap: 30px; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .stat-box { background: #16213e; padding: 10px 20px; border-radius: 8px; border: 2px solid #e94560; }
-        #board { display: grid; grid-template-columns: repeat(7, 50px); grid-template-rows: repeat(7, 50px); gap: 4px; justify-content: center; margin: 10px auto; background-color: #16213e; padding: 10px; border-radius: 12px; width: max-content; }
-        .tile { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; user-select: none; transition: transform 0.1s ease; }
-        .tile:active { transform: scale(0.9); }
-        .pi { background-color: #8a2be2; } .ai { background-color: #ff4500; } .block { background-color: #1e90ff; } .pick { background-color: #32cd32; } .cloud { background-color: #ff69b4; }
-        #game-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f3460; padding: 30px; border-radius: 15px; border: 3px solid #ffbe0b; box-shadow: 0 0 20px rgba(0,0,0,0.7); z-index: 100; text-align: center; }
-        .btn-game { background: #e94560; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        .btn-game:hover { background: #ff4500; }
+        /* Siberpunk Uzay Temalı Arka Plan */
+        body { 
+            background: radial-gradient(circle, #1a0033 0%, #0a001a 100%);
+            color: #fff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        h1 {
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #fff;
+            text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2, 0 0 30px #8a2be2;
+            margin-bottom: 5px;
+        }
+        #auth-container { 
+            margin: 0 auto 15px auto; 
+            background: rgba(22, 33, 62, 0.7); 
+            padding: 12px; 
+            border-radius: 12px; 
+            border: 1px solid #ffbe0b; 
+            max-width: 400px;
+            backdrop-filter: blur(5px);
+        }
+        #auth-status { font-size: 14px; color: #ffbe0b; font-weight: bold; margin-bottom: 8px; }
+        .btn-auth { background: #ffbe0b; color: #1a1a2e; border: none; padding: 8px 20px; font-size: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 0 10px rgba(255,190,11,0.5); }
+        
+        /* Premium Skor ve Hamle Paneli */
+        #stats-container { display: flex; justify-content: center; gap: 15px; font-size: 16px; font-weight: bold; margin-bottom: 15px; }
+        .stat-box { 
+            background: rgba(22, 33, 62, 0.8); 
+            padding: 10px 15px; 
+            border-radius: 10px; 
+            border: 2px solid #e94560; 
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+            min-width: 90px;
+        }
+        .stat-label { font-size: 11px; text-transform: uppercase; color: #aaa; margin-bottom: 3px; letter-spacing: 1px; }
+        .stat-val { font-size: 20px; color: #fff; text-shadow: 0 0 5px #fff; }
+
+        /* Neon Parıltılı Oyun Tahtası */
+        #board { 
+            display: grid; 
+            grid-template-columns: repeat(7, 52px); 
+            grid-template-rows: repeat(7, 52px); 
+            gap: 5px; 
+            justify-content: center; 
+            margin: 10px auto; 
+            background-color: rgba(15, 52, 96, 0.5); 
+            padding: 12px; 
+            border-radius: 16px; 
+            width: max-content; 
+            border: 2px solid #30475e;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        
+        /* CSS İle Gerçek Kristal ve Logo Tasarımları (Emojiler Kalktı) */
+        .tile { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            user-select: none; 
+            transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            box-sizing: border-box;
+            position: relative;
+        }
+        .tile:active { transform: scale(0.9); z-index: 10; }
+        
+        /* Kristal Tasarım Detayları */
+        .pi { 
+            background: linear-gradient(135deg, #b5179e, #7209b7); 
+            box-shadow: inset 0 0 8px #f72585, 0 0 10px rgba(181,23,158,0.6);
+        }
+        .pi::after { content: "π"; font-size: 26px; font-weight: bold; color: #fff; text-shadow: 0 0 8px #fff; }
+        
+        .ai { 
+            background: linear-gradient(135deg, #ff4e00, #ec9f05); 
+            box-shadow: inset 0 0 8px #ffbe0b, 0 0 10px rgba(255,78,0,0.6);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        }
+        .ai::after { content: "AI"; font-size: 14px; font-weight: bold; color: #fff; }
+
+        .block { 
+            background: linear-gradient(135deg, #00b4d8, #0077b6); 
+            box-shadow: inset 0 0 8px #90e0ef, 0 0 10px rgba(0,180,216,0.6);
+            border-radius: 4px;
+        }
+        .block::after { content: "♦"; font-size: 24px; color: #fff; }
+
+        .pick { 
+            background: linear-gradient(135deg, #00f5d4, #00bbf9); 
+            box-shadow: inset 0 0 8px #fff, 0 0 10px rgba(0,245,212,0.6);
+            transform: rotate(45deg) scale(0.8);
+        }
+        
+        .cloud { 
+            background: linear-gradient(135deg, #ff007f, #ff007f); 
+            box-shadow: inset 0 0 8px #fff, 0 0 10px rgba(255,0,127,0.6);
+            border-radius: 50%;
+            transform: scale(0.85);
+        }
+        .cloud::after { content: "★"; font-size: 20px; color: #fff; }
+
+        .blank { background: transparent; box-shadow: none; }
+
+        /* Tebrikler Penceresi */
+        #game-modal { 
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: #0f3460; 
+            padding: 30px; 
+            border-radius: 20px; 
+            border: 3px solid #ffbe0b; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.9); 
+            z-index: 100; 
+            text-align: center; 
+        }
+        .btn-game { background: #e94560; color: white; border: none; padding: 12px 25px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; box-shadow: 0 5px 15px rgba(233,69,96,0.4); }
+        .btn-game:hover { background: #ff4500; transform: translateY(-2px); }
     </style>
 </head>
 <body>
     <h1>Pi-Crush Pro</h1>
     
     <div id="auth-container">
-        <div id="auth-status">Please click the button below to sign in with your Pi account:</div>
-        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Sign In with Pi Network</button>
+        <div id="auth-status">Verifying connection with Pi Network...</div>
+        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Force Connect Pi</button>
     </div>
     
     <div id="stats-container">
-        <div class="stat-box">Level: <span id="level-val">1</span></div>
-        <div class="stat-box">Moves: <span id="moves-val">20</span></div>
-        <div class="stat-box">Score: <span id="score-val">0</span> / <span id="target-val">150</span></div>
+        <div class="stat-box"><div class="stat-label">Level</div><div class="stat-val" id="level-val">1</div></div>
+        <div class="stat-box"><div class="stat-label">Moves</div><div class="stat-val" id="moves-val">20</div></div>
+        <div class="stat-box"><div class="stat-label">Target</div><div class="stat-val" id="target-val">150</div></div>
+        <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val" id="score-val">0</div></div>
     </div>
     
     <div id="board"></div>
@@ -46,53 +162,39 @@
     </div>
 
     <script>
-        // Pi SDK Initialization
         async function initPi() {
             try {
                 if (window.Pi) {
                     await window.Pi.init({ version: "2.0", sandbox: true });
-                    console.log("Pi SDK initialized successfully.");
                     startPiAuth();
                 }
-            } catch (err) {
-                console.error("SDK Init Error:", err);
-            }
+            } catch (err) { console.error("SDK Init Error:", err); }
         }
 
-        // Authentication Function
         async function startPiAuth() {
             const statusDiv = document.getElementById('auth-status');
             const loginBtn = document.getElementById('login-btn');
-            
             if (!window.Pi) {
-                statusDiv.textContent = "Test Mode (Outside Pi Browser)";
+                statusDiv.textContent = "Developer Testing Mode Mode";
                 if(loginBtn) loginBtn.style.display = 'none';
                 return;
             }
-
             try {
                 statusDiv.textContent = "Connecting to Pi Network...";
-                const scopes = ['username'];
-                const auth = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-                
-                statusDiv.textContent = `Welcome, ${auth.user.username}!`;
+                const auth = await window.Pi.authenticate(['username'], onIncompletePaymentFound);
+                statusDiv.textContent = `Pilot Connected: ${auth.user.username}`;
                 if(loginBtn) loginBtn.style.display = 'none';
             } catch (err) {
-                console.error("Authentication failed:", err);
-                statusDiv.textContent = "Sign-in failed. Please try clicking the button again.";
+                statusDiv.textContent = "Tap button above to re-sync account.";
             }
         }
-
         function onIncompletePaymentFound(payment) {}
-
         document.addEventListener("DOMContentLoaded", initPi);
 
-        // --- GAME ENGINE CODES ---
+        // --- GAME ENGINE ---
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
-        const emojis = { 'pi': 'π', 'ai': '🤖', 'block': '📦', 'pick': '⛏️', 'cloud': '☁️' };
         const board = document.getElementById('board');
-        
         let score = 0, moves = 20, currentLevel = 1, targetScore = 150;
         let tiles = [], tileIdBeingDragged, tileIdBeingReplaced, gameActive = true;
 
@@ -109,7 +211,6 @@
                 const tile = document.createElement('div');
                 const randomType = tileTypes[Math.floor(Math.random() * tileTypes.length)];
                 tile.className = `tile ${randomType}`;
-                tile.textContent = emojis[randomType];
                 tile.setAttribute('draggable', true);
                 tile.setAttribute('id', i);
                 
@@ -119,7 +220,6 @@
                 tile.addEventListener('dragleave', dragLeave);
                 tile.addEventListener('drop', dragDrop);
                 tile.addEventListener('dragend', dragEnd);
-
                 board.appendChild(tile);
                 tiles.push(tile);
             }
@@ -133,66 +233,3 @@
         function dragDrop() { if(!gameActive) return; tileIdBeingReplaced = parseInt(this.id); }
 
         function dragEnd() {
-            if(!gameActive) return;
-            const validMoves = [tileIdBeingDragged - 1, tileIdBeingDragged + 1, tileIdBeingDragged - width, tileIdBeingDragged + width];
-            const isValidMove = validMoves.includes(tileIdBeingReplaced);
-
-            if (tileIdBeingReplaced >= 0 && isValidMove) {
-                swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
-                const hasRowMatch = checkRowForThree();
-                const hasColumnMatch = checkColumnForThree();
-
-                if (!hasRowMatch && !hasColumnMatch) {
-                    swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
-                } else {
-                    moves--;
-                    updateUI();
-                    checkMatchesAndDrop();
-                    checkGameStatus();
-                }
-            }
-        }
-
-        function swapTiles(id1, id2) {
-            const type1 = tiles[id1].className.split(' ');
-            const type2 = tiles[id2].className.split(' ');
-            tiles[id1].className = `tile ${type2}`; tiles[id1].textContent = emojis[type2];
-            tiles[id2].className = `tile ${type1}`; tiles[id2].textContent = emojis[type1];
-        }
-
-        function checkRowForThree() {
-            let foundMatch = false;
-            for (let i = 0; i < 49; i++) {
-                if (i % width > 4) continue;
-                let rowOfThree = [i, i + 1, i + 2];
-                let type = tiles[i].className.split(' ');
-                if (type && !tiles[i].className.includes('blank') && rowOfThree.every(idx => tiles[idx].className.split(' ') === type)) {
-                    score += 10; updateUI();
-                    rowOfThree.forEach(idx => { tiles[idx].className = 'tile blank'; tiles[idx].textContent = ''; });
-                    foundMatch = true;
-                }
-            }
-            return foundMatch;
-        }
-
-        function checkColumnForThree() {
-            let foundMatch = false;
-            for (let i = 0; i < 35; i++) {
-                let colOfThree = [i, i + width, i + (width * 2)];
-                let type = tiles[i].className.split(' ');
-                if (type && !tiles[i].className.includes('blank') && colOfThree.every(idx => tiles[idx].className.split(' ') === type)) {
-                    score += 10; updateUI();
-                    colOfThree.forEach(idx => { tiles[idx].className = 'tile blank'; tiles[idx].textContent = ''; });
-                    foundMatch = true;
-                }
-            }
-            return foundMatch;
-        }
-
-        function moveIntoSquareBelow() {
-            for (let i = 0; i < 42; i++) {
-                if (tiles[i + width].className.includes('blank')) {
-                    const type = tiles[i].className.split(' ');
-                    if(type) {
-                        tiles[i + width].className = `tile ${type}`; tiles[i + width].textContent = emojis[type];
-                        tiles[i].className = 'tile blank'; tiles[i].textContent = '';
