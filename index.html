@@ -32,6 +32,7 @@
             max-width: 380px;
         }
         #auth-status { font-size: 13px; color: #ffbe0b; font-weight: bold; }
+        .btn-auth { background: #ffbe0b; color: #1a1a2e; border: none; padding: 6px 15px; font-size: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; }
 
         #stats-container { display: flex; justify-content: center; gap: 10px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .stat-box { 
@@ -97,7 +98,8 @@
     <h1>Pi-Crush Elite</h1>
     
     <div id="auth-container">
-        <div id="auth-status">Pilot Connected: Pioneer_Developer</div>
+        <div id="auth-status">Verifying connection with Pi Network...</div>
+        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Sign In with Pi Network</button>
     </div>
     
     <div id="stats-container">
@@ -130,22 +132,10 @@
         <button id="modal-btn" class="btn-game" onclick="closeModal()">Next Level</button>
     </div>
 
-    <script>
-        // Pi SDK'yi normal tarayıcıları bozmayacak şekilde güvenli yüklüyoruz
-        const piScript = document.createElement('script');
-        piScript.src = "https://minepi.com";
-        piScript.onload = function() {
-            if(window.Pi) {
-                window.Pi.init({ version: "2.0", sandbox: true }).then(() => {
-                    window.Pi.authenticate(['username'], function(){}).then(auth => {
-                        document.getElementById('auth-status').textContent = "Pilot Connected: " + auth.user.username;
-                    }).catch(()=>{});
-                }).catch(()=>{});
-            }
-        };
-        piScript.onerror = function() { console.log("Pi SDK blocked by browser, bypassing safely."); };
-        document.head.appendChild(piScript);
+    <!-- Güvenli Pi SDK Kütüphane Yükleyicisi -->
+    <script src="https://minepi.com" defer onerror="forceMockAuth()"></script>
 
+    <script>
         // --- GAME ENGINE ---
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
@@ -205,3 +195,16 @@
                 if (!checkRowForThree() && !checkColumnForThree()) {
                     swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
                 } else {
+                    moves--; updateUI(); checkMatchesAndDrop(); checkGameStatus();
+                }
+            }
+        }
+
+        function swapTiles(id1, id2) {
+            const class1 = tiles[id1].className;
+            const text1 = tiles[id1].textContent;
+            tiles[id1].className = tiles[id2].className;
+            tiles[id1].textContent = tiles[id2].textContent;
+            tiles[id2].className = class1;
+            tiles[id2].textContent = text1;
+        }
