@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pi-Crush Premium Elite</title>
-    <!-- Resmi Kararlı Pi SDK -->
-    <script src="https://minepi.com"></script>
     <style>
         body { 
             background: radial-gradient(circle, #1a0033 0%, #0a001a 100%);
@@ -170,7 +168,7 @@
                 tile.setAttribute('draggable', true);
                 tile.setAttribute('id', i);
                 
-                // Mobil Dokunmatik (Touch) Desteği Eklendi
+                // Mobil Dokunmatik Desteği
                 tile.addEventListener('touchstart', touchStart, {passive: true});
                 tile.addEventListener('touchmove', touchMove, {passive: false});
                 tile.addEventListener('touchend', touchEnd);
@@ -188,7 +186,6 @@
             checkMatchesAndDrop();
         }
 
-        // --- MOBİL DOKUNMATİK SÜRÜKLEME SİSTEMİ ---
         let startX, startY, activeTouchTileId;
         function touchStart(e) {
             if(!gameActive || activeJoker) return;
@@ -213,3 +210,6 @@
                 else if (diffY < -30 && activeTouchTileId >= width) targetId = activeTouchTileId - width;
             }
 
+            if (targetId !== -1) {
+                tileIdBeingDragged = activeTouchTileId;
+                tileIdBeingReplaced = targetId;
