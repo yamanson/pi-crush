@@ -100,8 +100,8 @@
     <h1>Pi-Crush Elite</h1>
     
     <div id="auth-container">
-        <div id="auth-status">Verifying connection with Pi Network...</div>
-        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Sign In with Pi Network</button>
+        <div id="auth-status">Pilot Connected: Pioneer_Developer</div>
+        <button id="login-btn" class="btn-auth" onclick="startPiAuth()">Authenticate Pi Account</button>
     </div>
     
     <div id="stats-container">
@@ -135,47 +135,6 @@
     </div>
 
     <script>
-        // --- AUTH PIPELINE ---
-        let sdkInitialized = false;
-
-        async function initPiSDK() {
-            if (window.Pi && !sdkInitialized) {
-                try {
-                    await window.Pi.init({ version: "2.0", sandbox: true });
-                    sdkInitialized = true;
-                    console.log("Pi SDK active.");
-                    // Otomatik giriş tetikleniyor
-                    startPiAuth();
-                } catch (e) { console.log("Pi Init Error:", e); }
-            }
-        }
-
-        async function startPiAuth() {
-            const statusDiv = document.getElementById('auth-status');
-            const loginBtn = document.getElementById('login-btn');
-            
-            if (window.Pi) {
-                try {
-                    if (!sdkInitialized) { await window.Pi.init({ version: "2.0", sandbox: true }); sdkInitialized = true; }
-                    window.Pi.authenticate(['username'], function(){})
-                    .then(auth => {
-                        statusDiv.textContent = "Welcome, " + auth.user.username;
-                        if(loginBtn) loginBtn.style.display = 'none';
-                        // Giriş başarılı olunca tahtayı kesin olarak açıyoruz
-                        createBoard();
-                    })
-                    .catch(err => { forceFallbackAuth(); });
-                } catch(e) { forceFallbackAuth(); }
-            } else { forceFallbackAuth(); }
-        }
-
-        function forceFallbackAuth() {
-            document.getElementById('auth-status').textContent = "Welcome, Pioneer_Developer";
-            if(document.getElementById('login-btn')) document.getElementById('login-btn').style.display = 'none';
-            // Mobil tarayıcı kilitlerini tamamen aşmak için tahtayı her koşulda çalıştırıyoruz
-            createBoard();
-        }
-
         // --- GAME ENGINE ---
         const width = 7;
         const tileTypes = ['pi', 'ai', 'block', 'pick', 'cloud'];
@@ -198,7 +157,6 @@
         }
 
         function createBoard() {
-            if(tiles.length > 0) return; // Çift tetiklenmeyi önleme
             board.innerHTML = "";
             tiles = [];
             for (let i = 0; i < width * width; i++) {
@@ -210,3 +168,44 @@
                 tile.setAttribute('id', i);
                 
                 tile.addEventListener('dragstart', dragStart);
+                tile.addEventListener('dragover', dragOver);
+                tile.addEventListener('dragenter', dragEnter);
+                tile.addEventListener('dragleave', dragLeave);
+                tile.addEventListener('drop', dragDrop);
+                tile.addEventListener('dragend', dragEnd);
+                tile.addEventListener('click', tileClick);
+                board.appendChild(tile);
+                tiles.push(tile);
+            }
+            checkMatchesAndDrop();
+        }
+
+        function dragStart() { if(!gameActive || activeJoker) return; tileIdBeingDragged = parseInt(this.id); }
+        function dragOver(e) { e.preventDefault(); }
+        function dragEnter(e) { e.preventDefault(); }
+        function dragLeave() {}
+        function dragDrop() { if(!gameActive || activeJoker) return; tileIdBeingReplaced = parseInt(this.id); }
+
+        function dragEnd() {
+            if(!gameActive || activeJoker) return;
+            const validMoves = [tileIdBeingDragged - 1, tileIdBeingDragged + 1, tileIdBeingDragged - width, tileIdBeingDragged + width];
+            if (tileIdBeingReplaced >= 0 && validMoves.includes(tileIdBeingReplaced)) {
+                swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
+                if (!checkRowForThree() && !checkColumnForThree()) {
+                    swapTiles(tileIdBeingDragged, tileIdBeingReplaced);
+                } else {
+                    moves--; updateUI(); checkMatchesAndDrop(); checkGameStatus();
+                }
+            }
+        }
+
+        function swapTiles(id1, id2) {
+            const class1 = tiles[id1].className;
+            const text1 = tiles[id1].textContent;
+            tiles[id1].className = tiles[id2].className;
+            tiles[id1].textContent = tiles[id2].textContent;
+            tiles[id2].className = class1;
+            tiles[id2].textContent = text1;
+        }
+
+        function getTileType(tile) {
