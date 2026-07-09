@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pi-Crush Premium Elite</title>
+    <!-- Resmi Kararlı Pi SDK -->
+    <script src="https://minepi.com"></script>
     <style>
         body { 
             background: radial-gradient(circle, #1a0033 0%, #0a001a 100%);
@@ -32,7 +34,7 @@
             border: 1px solid #ffbe0b; 
             max-width: 90%;
         }
-        #auth-status { font-size: 13px; color: #ffbe0b; font-weight: bold; }
+        #auth-status { font-size: 13px; color: #ffbe0b; font-weight: bold; cursor: pointer; }
 
         #stats-container { display: flex; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold; margin-bottom: 10px; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; }
         .stat-box { 
@@ -46,7 +48,7 @@
         .stat-label { font-size: 9px; text-transform: uppercase; color: #aaa; margin-bottom: 2px; }
         .stat-val { font-size: 15px; color: #fff; }
 
-        /* Mobil Ekranlarda Sıkışmayan Esnek Oyun Tahtası */
+        /* Mobil ve Masaüstü Uyumlu Sıkışmayan Esnek Oyun Tahtası */
         #board { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
@@ -57,7 +59,7 @@
             padding: 8px; 
             border-radius: 14px; 
             width: 90vw; 
-            max-width: 350px;
+            max-width: 340px;
             aspect-ratio: 1 / 1;
             border: 2px solid #30475e;
             box-shadow: 0 0 25px rgba(0,0,0,0.8);
@@ -102,7 +104,7 @@
     <h1>Pi-Crush Elite</h1>
     
     <div id="auth-container">
-        <div id="auth-status">Pilot Connected: Pioneer_Developer</div>
+        <div id="auth-status" onclick="triggerManualVerification()">Pilot Connected: Pioneer_Developer (Click to Verify)</div>
     </div>
     
     <div id="stats-container">
@@ -210,6 +212,3 @@
                 else if (diffY < -30 && activeTouchTileId >= width) targetId = activeTouchTileId - width;
             }
 
-            if (targetId !== -1) {
-                tileIdBeingDragged = activeTouchTileId;
-                tileIdBeingReplaced = targetId;
